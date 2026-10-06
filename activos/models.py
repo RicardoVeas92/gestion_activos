@@ -10,6 +10,12 @@ class ModeloImpresora(models.Model):
     tecnologia = models.CharField(
         max_length=50, default="Láser", verbose_name="Tecnología"
     )
+    imagen = models.ImageField(
+        upload_to="modelos/",
+        blank=True,
+        null=True,
+        verbose_name="Fotografía del Modelo",
+    )
     manual_pdf = models.FileField(
         upload_to="manuales/",
         blank=True,

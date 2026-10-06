@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Impresoras Instaladas - TechAssets{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom" style="border-color: rgba(255,255,255,0.1) !important;">
+    <div>
+        <h3 class="fw-bold text-white mb-1 d-flex align-items-center">
+            <i class="bi bi-building text-warning me-2 fs-4"></i>Impresoras Instaladas
+        </h3>
+        <span class="text-light opacity-75" style="font-size: 0.88rem;">Gestión de equipos asignados en dependencias de La Serena</span>
+    </div>
+    <a href="{% url 'crear_impresora' %}" class="btn btn-warning fw-bold text-dark px-3 py-2 shadow-sm" style="background-color: #f59e0b; border: none; font-size: 0.9rem;">
+        <i class="bi bi-plus-lg me-1"></i>Registrar Impresora
+    </a>
+</div>
+
+<!-- Buscador Tecnológico Fino -->
+<form method="GET" class="mb-4">
+    <div class="input-group shadow-sm" style="max-width: 600px;">
+        <span class="input-group-text bg-dark text-warning border-0" style="background: rgba(15, 23, 42, 0.8) !important;">
+            <i class="bi bi-search"></i>
+        </span>
+        <input type="text" name="q" class="form-control bg-dark text-white border-0" style="background: rgba(15, 23, 42, 0.8) !important; font-size: 0.9rem;" placeholder="Buscar por N° Serie, Oficina o Modelo..." value="{{ query }}">
+        <button class="btn btn-warning fw-bold text-dark px-3" type="submit" style="background-color: #f59e0b; border: none; font-size: 0.9rem;">Buscar</button>
+        {% if query %}
+            <a href="{% url 'lista_impresoras' %}" class="btn btn-outline-secondary text-white" style="border-color: rgba(255,255,255,0.2);">Limpiar</a>
+        {% endif %}
+    </div>
+</form>
+
+<!-- Tabla Oscura Delicada Glassmorphism -->
+<div class="card border-0 shadow-lg" style="background: rgba(15, 23, 42, 0.8) !important; backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08) !important; border-radius: 12px; overflow: hidden;">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0" style="color: #cbd5e1; background: transparent !important;">
+            <thead>
+                <tr style="background: rgba(30, 41, 59, 0.95); border-bottom: 2px solid #f59e0b;">
+                    <th style="color: #f59e0b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem; font-weight: 700; background: transparent;">N° Serie (S/N)</th>
+                    <th style="color: #f59e0b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem; font-weight: 700; background: transparent;">Modelo</th>
+                    <th style="color: #f59e0b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem; font-weight: 700; background: transparent;">Oficina / Área</th>
+                    <th style="color: #f59e0b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem; font-weight: 700; background: transparent;">Ubicación Física</th>
+                    <th class="text-end" style="color: #f59e0b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem; font-weight: 700; background: transparent;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in impresoras %}
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05); background: transparent;">
+                    <td style="padding: 0.85rem 1.2rem; background: transparent;">
+                        <span class="fw-bold font-monospace text-warning" style="font-size: 0.88rem; letter-spacing: 0.5px;">{{ i.numero_serie }}</span>
+                    </td>
+                    <td style="padding: 0.85rem 1.2rem; background: transparent;">
+                        <span class="badge bg-dark text-light border border-secondary fw-normal px-2 py-1" style="border-color: rgba(255,255,255,0.15) !important; font-size: 0.8rem;">
+                            {{ i.modelo.modelo }}
+                        </span>
+                    </td>
+                    <td style="padding: 0.85rem 1.2rem; background: transparent;">
+                        <span class="text-white fw-semibold" style="font-size: 0.9rem;">{{ i.oficina }}</span>
+                    </td>
+                    <td style="padding: 0.85rem 1.2rem; background: transparent;">
+                        <span class="text-white fw-medium" style="font-size: 0.88rem;">{{ i.ubicacion|default:"No especificada" }}</span>
+                    </td>
+                    <td class="text-end" style="padding: 0.85rem 1.2rem; background: transparent;">
+                        <a href="{% url 'editar_impresora' i.pk %}" class="btn btn-sm btn-outline-warning me-1 border-0" style="background: rgba(245, 158, 11, 0.15);" title="Editar">
+                            <i class="bi bi-pencil-fill text-warning"></i>
+                        </a>
+                        <a href="{% url 'eliminar_impresora' i.pk %}" class="btn btn-sm btn-outline-danger border-0" style="background: rgba(239, 68, 68, 0.15);" title="Eliminar">
+                            <i class="bi bi-trash-fill text-danger"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr style="background: transparent;">
+                    <td colspan="5" class="text-center py-5 text-muted" style="background: transparent;">
+                        <i class="bi bi-inbox fs-2 d-block mb-2 text-secondary"></i>
+                        No se encontraron impresoras instaladas registradas.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

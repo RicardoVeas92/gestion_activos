@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Salidas de Inventario - TechAssets{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom" style="border-color: rgba(255,255,255,0.1) !important;">
+    <div>
+        <h3 class="fw-bold text-white mb-1 d-flex align-items-center">
+            <i class="bi bi-journal-check text-warning me-2 fs-4"></i>Registros de Consumo por Ticket
+        </h3>
+        <span class="text-light opacity-75" style="font-size: 0.88rem;">Historial de salidas de stock asociadas a atenciones de Santiago</span>
+    </div>
+    <a href="{% url 'registrar_salida' %}" class="btn btn-warning fw-bold text-dark px-3 py-2 shadow-sm" style="background-color: #f59e0b; border: none; font-size: 0.9rem;">
+        <i class="bi bi-box-arrow-up-right me-1"></i>Registrar Salida
+    </a>
+</div>
+
+<!-- Buscador Fino -->
+<form method="GET" class="mb-4">
+    <div class="input-group shadow-sm" style="max-width: 600px;">
+        <span class="input-group-text bg-dark text-warning border-0" style="background: rgba(15, 23, 42, 0.8) !important;">
+            <i class="bi bi-search"></i>
+        </span>
+        <input type="text" name="q" class="form-control bg-dark text-white border-0" style="background: rgba(15, 23, 42, 0.8) !important; font-size: 0.9rem;" placeholder="Buscar por N° Ticket Santiago o Técnico..." value="{{ query }}">
+        <button class="btn btn-warning fw-bold text-dark px-3" type="submit" style="background-color: #f59e0b; border: none; font-size: 0.9rem;">Buscar</button>
+        {% if query %}
+            <a href="{% url 'lista_usos' %}" class="btn btn-outline-secondary text-white" style="border-color: rgba(255,255,255,0.2);">Limpiar</a>
+        {% endif %}
+    </div>
+</form>
+
+<!-- Tabla Oscura Delicada Glassmorphism -->
+<div class="card border-0 shadow-lg" style="background: rgba(15, 23, 42, 0.8) !important; backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08) !important; border-radius: 12px; overflow: hidden;">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0" style="color: #cbd5e1; background: transparent !important;">
+            <thead>
+                <tr style="background: rgba(30, 41, 59, 0.95); border-bottom: 2px solid #f59e0b;">
+                    <th style="color: #f59e0b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem; font-weight: 700; background: transparent;">N° Ticket</th>
+                    <th style="color: #f59e0b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem; font-weight: 700; background: transparent;">Impresora Atendida</th>
+                    <th style="color: #f59e0b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem; font-weight: 700; background: transparent;">Insumo / Repuesto</th>
+                    <th style="color: #f59e0b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem; font-weight: 700; background: transparent;">Técnico Ejecutor</th>
+                    <th style="color: #f59e0b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem; font-weight: 700; background: transparent;">Fecha</th>
+                    <th style="color: #f59e0b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem; font-weight: 700; background: transparent;">Observaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for uso in usos %}
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05); background: transparent;">
+                    <td style="padding: 0.85rem 1.2rem; background: transparent;">
+                        <span class="badge bg-dark text-warning border border-warning border-opacity-50 px-2 py-1 font-monospace fw-bold" style="font-size: 0.85rem;">
+                            {{ uso.ticket_santiago }}
+                        </span>
+                    </td>
+                    <td style="padding: 0.85rem 1.2rem; background: transparent;">
+                        {% if uso.impresora_instalada %}
+                            <span class="text-white fw-semibold d-block" style="font-size: 0.9rem;">{{ uso.impresora_instalada.oficina }}</span>
+                            <small class="text-warning-50 font-monospace" style="font-size: 0.78rem; color: #fef08a;">S/N: {{ uso.impresora_instalada.numero_serie }}</small>
+                        {% else %}
+                            <span class="text-muted" style="font-size: 0.85rem;">No especificada</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.85rem 1.2rem; background: transparent;">
+                        <span class="text-white fw-semibold d-block" style="font-size: 0.9rem;">{{ uso.item_utilizado.nombre }}</span>
+                        <small class="text-warning-50 font-monospace" style="font-size: 0.78rem; color: #fef08a;">P/N: {{ uso.item_utilizado.numero_parte }}</small>
+                    </td>
+                    <td style="padding: 0.85rem 1.2rem; background: transparent;">
+                        <span class="text-white fw-medium" style="font-size: 0.88rem;"><i class="bi bi-person-badge text-warning me-1"></i>{{ uso.tecnico }}</span>
+                    </td>
+                    <td style="padding: 0.85rem 1.2rem; background: transparent;">
+                        <span class="text-white" style="font-size: 0.88rem;">{{ uso.fecha_uso|date:"d/m/Y" }}</span>
+                    </td>
+                    <td style="padding: 0.85rem 1.2rem; background: transparent;">
+                        <span class="text-light" style="font-size: 0.85rem;">{{ uso.observaciones|default:"Sin observaciones" }}</span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr style="background: transparent;">
+                    <td colspan="6" class="text-center py-5 text-muted" style="background: transparent;">
+                        <i class="bi bi-inbox fs-2 d-block mb-2 text-secondary"></i>
+                        No hay registros de salidas o consumos efectuados.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

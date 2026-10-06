@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}Stock e Inventario - TechAssets{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom" style="border-color: rgba(255,255,255,0.1) !important;">
+    <div>
+        <h3 class="fw-bold text-white mb-1 d-flex align-items-center">
+            <i class="bi bi-box-seam text-warning me-2 fs-4"></i>Inventario de Insumos y Repuestos
+        </h3>
+        <span class="text-light opacity-75" style="font-size: 0.88rem;">Control de existencia y stock físico en La Serena</span>
+    </div>
+    <a href="{% url 'crear_item' %}" class="btn btn-warning fw-bold text-dark px-3 py-2 shadow-sm" style="background-color: #f59e0b; border: none; font-size: 0.9rem;">
+        <i class="bi bi-plus-lg me-1"></i>Agregar a Stock
+    </a>
+</div>
+
+<!-- Buscador -->
+<form method="GET" class="mb-4">
+    <div class="input-group shadow-sm" style="max-width: 600px;">
+        <span class="input-group-text bg-dark text-warning border-0" style="background: rgba(15, 23, 42, 0.9) !important;">
+            <i class="bi bi-search"></i>
+        </span>
+        <input type="text" name="q" class="form-control bg-dark text-white border-0 px-3" style="background: rgba(15, 23, 42, 0.9) !important; font-size: 0.9rem;" placeholder="Buscar por P/N, Descripción o Tipo..." value="{{ query }}">
+        <button class="btn btn-warning fw-bold text-dark px-3" type="submit" style="background-color: #f59e0b; border: none; font-size: 0.9rem;">Buscar</button>
+        {% if query %}
+            <a href="{% url 'lista_inventario' %}" class="btn btn-outline-secondary text-white" style="border-color: rgba(255,255,255,0.2);">Limpiar</a>
+        {% endif %}
+    </div>
+</form>
+
+<!-- Tabla Oscura Glassmorphism -->
+<div class="card border-0 shadow-lg" style="background: rgba(15, 23, 42, 0.8) !important; backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08) !important; border-radius: 12px; overflow: hidden;">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0" style="color: #cbd5e1; background: transparent !important;">
+            <thead>
+                <tr style="background: rgba(30, 41, 59, 0.95); border-bottom: 2px solid #f59e0b;">
+                    <th style="color: #f59e0b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem; font-weight: 700; background: transparent;">Imagen</th>
+                    <th style="color: #f59e0b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem; font-weight: 700; background: transparent;">P/N (N° Parte)</th>
+                    <th style="color: #f59e0b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem; font-weight: 700; background: transparent;">Descripción</th>
+                    <th style="color: #f59e0b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem; font-weight: 700; background: transparent;">Tipo</th>
+                    <th style="color: #f59e0b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem; font-weight: 700; background: transparent;">Estado Stock</th>
+                    <th class="text-end" style="color: #f59e0b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem; font-weight: 700; background: transparent;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05); background: transparent;">
+                    <td style="padding: 0.85rem 1.2rem; background: transparent;">
+                        {% if item.imagen %}
+                            <!-- Botón/Miniatura de Imagen -->
+                            <img src="{{ item.imagen.url }}" 
+                                alt="{{ item.nombre }}" 
+                                class="rounded border border-warning img-preview-trigger" 
+                                data-img-url="{{ item.imagen.url }}"
+                                data-img-title="{{ item.nombre }} (P/N: {{ item.numero_parte }})"
+                                style="width: 55px; height: 55px; object-fit: cover; cursor: pointer; transition: transform 0.2s;" 
+                                onmouseover="this.style.transform='scale(1.1)'" 
+                                onmouseout="this.style.transform='scale(1)'">
+                        {% else %}
+                            <span class="badge bg-dark text-muted border border-secondary" style="font-size: 0.75rem;"><i class="bi bi-image me-1"></i>Sin foto</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.85rem 1.2rem; background: transparent;">
+                        <span class="fw-bold font-monospace text-warning" style="font-size: 0.88rem; letter-spacing: 0.5px;">{{ item.numero_parte }}</span>
+                    </td>
+                    <td style="padding: 0.85rem 1.2rem; background: transparent;">
+                        <span class="text-white fw-medium" style="font-size: 0.9rem;">{{ item.nombre }}</span>
+                    </td>
+                    <td style="padding: 0.85rem 1.2rem; background: transparent;">
+                        {% if item.tipo == 'SUMINISTRO' %}
+                            <span class="badge bg-dark text-info border border-info border-opacity-50 px-2 py-1 fw-medium" style="font-size: 0.78rem;">
+                                <i class="bi bi-droplet-fill me-1"></i>{{ item.get_tipo_display }}
+                            </span>
+                        {% else %}
+                            <span class="badge bg-dark text-light border border-secondary border-opacity-50 px-2 py-1 fw-medium" style="font-size: 0.78rem;">
+                                <i class="bi bi-gear-fill me-1"></i>{{ item.get_tipo_display }}
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.85rem 1.2rem; background: transparent;">
+                        {% if item.estado == 'DISPONIBLE' %}
+                            <span class="badge bg-dark text-success border border-success border-opacity-50 px-2 py-1 fw-medium" style="font-size: 0.78rem;">
+                                <i class="bi bi-check-circle-fill me-1"></i>{{ item.get_estado_display }}
+                            </span>
+                        {% elif item.estado == 'INSTALADO' %}
+                            <span class="badge bg-dark text-warning border border-warning border-opacity-50 px-2 py-1 fw-medium" style="font-size: 0.78rem;">
+                                <i class="bi bi-arrow-right-circle-fill me-1"></i>{{ item.get_estado_display }}
+                            </span>
+                        {% else %}
+                            <span class="badge bg-dark text-danger border border-danger border-opacity-50 px-2 py-1 fw-medium" style="font-size: 0.78rem;">
+                                <i class="bi bi-x-circle-fill me-1"></i>{{ item.get_estado_display }}
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end" style="padding: 0.85rem 1.2rem; background: transparent;">
+                        <a href="{% url 'editar_item' item.pk %}" class="btn btn-sm btn-outline-warning me-1 border-0" style="background: rgba(245, 158, 11, 0.15);" title="Editar">
+                            <i class="bi bi-pencil-fill text-warning"></i>
+                        </a>
+                        <a href="{% url 'eliminar_item' item.pk %}" class="btn btn-sm btn-outline-danger border-0" style="background: rgba(239, 68, 68, 0.15);" title="Eliminar">
+                            <i class="bi bi-trash-fill text-danger"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr style="background: transparent;">
+                    <td colspan="6" class="text-center py-5 text-muted" style="background: transparent;">
+                        <i class="bi bi-inbox fs-2 d-block mb-2 text-secondary"></i>
+                        No hay ítems registrados en el inventario.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Único de Visualización (Ubicado fuera de la tabla para evitar bloqueos) -->
+<div class="modal fade" id="globalImageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg" style="background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(245, 158, 11, 0.4) !important;">
+            <div class="modal-header border-bottom border-secondary py-2">
+                <h6 class="modal-title text-warning fw-bold mb-0" id="globalModalTitle">
+                    <i class="bi bi-image me-2"></i>Vista Previa de Imagen
+                </h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <img id="globalModalImage" src="" alt="Vista previa" class="img-fluid rounded shadow" style="max-height: 70vh; object-fit: contain;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const triggers = document.querySelectorAll('.img-preview-trigger');
+    const modalElement = document.getElementById('globalImageModal');
+    const modalImage = document.getElementById('globalModalImage');
+    const modalTitle = document.getElementById('globalModalTitle');
+    
+    if (triggers.length > 0 && modalElement) {
+        const modal = new bootstrap.Modal(modalElement);
+        
+        triggers.forEach(trigger => {
+            trigger.addEventListener('click', function() {
+                const url = this.getAttribute('data-img-url');
+                const title = this.getAttribute('data-img-title');
+                
+                modalImage.src = url;
+                modalTitle.innerHTML = '<i class="bi bi-image me-2"></i>' + title;
+                
+                modal.show();
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0 fs-5"><i class="bi bi-box-seam-fill me-2"></i>{{ titulo }}</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <div class="form-text text-muted">{{ field.help_text }}</div>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">{{ field.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'lista_inventario' %}" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-success"><i class="bi bi-check-lg me-1"></i>Guardar en Inventario</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
