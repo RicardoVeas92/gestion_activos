@@ -128,3 +128,23 @@ MAILERS = {
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# ==========================================
+# CONFIGURACIÓN DE SEGURIDAD Y SESIONES
+# ==========================================
+
+# 1. Cierra la sesión automáticamente cuando el usuario cierra el navegador o se detiene/reinicia el servidor
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# 2. Duración máxima de la sesión en segundos (ejemplo: 1800 segundos = 30 minutos)
+# Transcurrido este tiempo de inactividad, la sesión expirará automáticamente.
+SESSION_COOKIE_AGE = 1800  
+
+# 3. Renueva la galleta (cookie) en cada petición del usuario para que el tiempo límite
+# se reinicie mientras el usuario siga interactuando activamente con el sistema.
+SESSION_SAVE_EVERY_REQUEST = True
+
+# Redirecciones de Autenticación
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'

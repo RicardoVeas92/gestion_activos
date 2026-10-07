@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ titulo }} - TechAssets{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card border-0 shadow-lg" style="background: rgba(15, 23, 42, 0.85) !important; backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08) !important; border-top: 2px solid #f59e0b !important; border-radius: 12px;">
+            <div class="card-body p-4">
+                <h4 class="fw-bold text-white mb-4"><i class="bi bi-person-plus-fill text-warning me-2"></i>{{ titulo }}</h4>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label text-warning fw-semibold fs-6">
+                                {{ field.label }}
+                            </label>
+
+                            {% if field.name == 'es_admin' %}
+                                <div class="form-check form-switch mt-1">
+                                    {{ field }}
+                                    <label class="form-check-label text-light opacity-75 ms-2" for="{{ field.id_for_label }}">
+                                        Marcar si este usuario tendrá acceso a administrar usuarios y panel admin
+                                    </label>
+                                </div>
+                            {% else %}
+                                {{ field }}
+                            {% endif %}
+
+                            {% for error in field.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+                        <a href="{% url 'lista_usuarios' %}" class="btn btn-outline-secondary text-white">Cancelar</a>
+                        <button type="submit" class="btn btn-warning fw-bold text-dark px-4" style="background-color: #f59e0b; border: none;">
+                            Guardar Usuario
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

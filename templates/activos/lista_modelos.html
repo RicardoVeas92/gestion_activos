@@ -3,87 +3,106 @@
 {% block title %}Modelos de Impresoras - TechAssets{% endblock %}
 
 {% block content %}
+<style>
+    /* Contenedor tipo marco de exposición para el equipo */
+    .card-img-zoom-wrapper {
+        position: relative;
+        height: 190px;
+        overflow: hidden;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        background: rgba(10, 15, 29, 0.7); /* Fondo oscuro neutro para resaltar el equipo */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Ajuste para desplegar la impresora COMPLETA sin recortes */
+    .card-img-zoom-wrapper img {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain; /* Garantiza mostrar la impresora entera */
+        transition: transform 0.35s ease-in-out, filter 0.35s ease;
+        filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.5)); /* Sombra para dar efecto 3D */
+    }
+
+    /* Zoom suave al pasar el cursor sobre la tarjeta */
+    .card-tech:hover .card-img-zoom-wrapper img {
+        transform: scale(1.12); /* Amplía la impresora delicadamente */
+        filter: drop-shadow(0px 6px 14px rgba(245, 158, 11, 0.4));
+    }
+</style>
+
 <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom" style="border-color: rgba(255,255,255,0.1) !important;">
     <div>
         <h3 class="fw-bold text-white mb-1 d-flex align-items-center">
-            <i class="bi bi-printer text-warning me-2 fs-4"></i>Catálogo de Modelos
+            <i class="bi bi-printer-fill text-warning me-2 fs-4"></i>Catálogo de Modelos
         </h3>
-        <span class="text-light opacity-75" style="font-size: 0.88rem;">Fichas técnicas y especificaciones de equipos base</span>
+        <span class="text-light opacity-75" style="font-size: 0.88rem;">Especificaciones técnicas y documentación de impresoras</span>
     </div>
     <a href="{% url 'crear_modelo' %}" class="btn btn-warning fw-bold text-dark px-3 py-2 shadow-sm" style="background-color: #f59e0b; border: none; font-size: 0.9rem;">
-        <i class="bi bi-plus-lg me-1"></i>Nuevo Modelo
+        <i class="bi bi-plus-circle-fill me-1"></i>Nuevo Modelo
     </a>
 </div>
 
-<!-- Buscador Fino -->
-<form method="GET" class="mb-4">
-    <div class="input-group shadow-sm" style="max-width: 600px;">
-        <span class="input-group-text bg-dark text-warning border-0" style="background: rgba(15, 23, 42, 0.9) !important;">
-            <i class="bi bi-search"></i>
-        </span>
-        <input type="text" name="q" class="form-control bg-dark text-white border-0 px-3" style="background: rgba(15, 23, 42, 0.9) !important; font-size: 0.9rem;" placeholder="Buscar por marca o modelo..." value="{{ query }}">
-        <button class="btn btn-warning fw-bold text-dark px-3" type="submit" style="background-color: #f59e0b; border: none; font-size: 0.9rem;">Buscar</button>
-        {% if query %}
-            <a href="{% url 'lista_modelos' %}" class="btn btn-outline-secondary text-white" style="border-color: rgba(255,255,255,0.2);">Limpiar</a>
-        {% endif %}
-    </div>
-</form>
-
-<!-- Grid con Tarjetas Estilo Inicio y Espacio Destacado para Fotografía -->
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 my-3">
+<!-- Rejilla de Cards -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     {% for m in modelos %}
     <div class="col">
-        <div class="card card-tech h-100 text-center p-3">
-            <div class="card-body d-flex flex-column align-items-center p-0">
-                
-                <!-- Visor de Fotografía Destacada -->
-                <div class="d-flex align-items-center justify-content-center mb-3 w-100 rounded p-2" style="height: 150px; background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.05);">
-                    {% if m.imagen %}
-                        <img src="{{ m.imagen.url }}" alt="{{ m.modelo }}" class="img-fluid h-100 rounded" style="object-fit: contain; filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.5));">
-                    {% else %}
-                        <div class="d-flex flex-column align-items-center justify-content-center text-muted">
-                            <i class="bi bi-printer-fill text-warning opacity-75 display-5 mb-1"></i>
-                            <small class="text-light opacity-50" style="font-size: 0.75rem;">Sin imagen subida</small>
-                        </div>
-                    {% endif %}
+        <div class="card card-tech h-100 shadow-lg border-0" style="background: rgba(15, 23, 42, 0.85) !important; backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08) !important; border-radius: 12px; overflow: hidden;">
+            
+            <!-- Marco de la imagen ajustado (contain) -->
+            <div class="card-img-zoom-wrapper">
+                {% if m.imagen %}
+                    <img src="{{ m.imagen.url }}" alt="{{ m.modelo }}">
+                {% else %}
+                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                        <i class="bi bi-image fs-1 opacity-50"></i>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Cuerpo de la Card -->
+            <div class="card-body d-flex flex-column p-4">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <h5 class="fw-bold text-white mb-0">{{ m.marca }}</h5>
+                        <span class="text-warning fw-semibold fs-6">{{ m.modelo }}</span>
+                    </div>
+                    <span class="badge bg-dark text-warning border border-warning px-2 py-1">
+                        {{ m.tecnologia }}
+                    </span>
                 </div>
 
-                <!-- Detalles del Equipo -->
-                <span class="text-warning text-uppercase fw-bold mb-1" style="font-size: 0.75rem; letter-spacing: 1px;">{{ m.marca }}</span>
-                <h5 class="card-title text-white fw-bold mb-1">{{ m.modelo }}</h5>
-                <span class="badge bg-dark text-warning border border-warning border-opacity-25 fw-normal mb-3" style="font-size: 0.75rem;">
-                    Tecnología {{ m.tecnologia }}
-                </span>
+                <div class="mt-auto pt-3 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                    {% if m.manual_pdf %}
+                        <a href="{{ m.manual_pdf.url }}" target="_blank" class="btn btn-sm btn-outline-info">
+                            <i class="bi bi-file-earmark-pdf-fill me-1"></i>Manual
+                        </a>
+                    {% else %}
+                        <span class="text-muted small">Sin PDF</span>
+                    {% endif %}
 
-                <!-- Acciones e Integración de PDF -->
-                <div class="mt-auto w-100 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
-                    <div class="d-flex align-items-center justify-content-between">
-                        {% if m.manual_pdf %}
-                            <a href="{{ m.manual_pdf.url }}" target="_blank" class="btn btn-sm btn-outline-warning border-0 fw-semibold" style="background: rgba(245, 158, 11, 0.15); font-size: 0.8rem;">
-                                <i class="bi bi-file-earmark-pdf-fill me-1"></i>Manual PDF
-                            </a>
-                        {% else %}
-                            <span class="text-light opacity-50 small" style="font-size: 0.78rem;"><i class="bi bi-file-earmark-x me-1"></i>Sin PDF</span>
-                        {% endif %}
-
-                        <div>
-                            <a href="{% url 'editar_modelo' m.pk %}" class="btn btn-sm btn-outline-warning border-0 me-1" style="background: rgba(245, 158, 11, 0.15);" title="Editar">
-                                <i class="bi bi-pencil-fill text-warning"></i>
-                            </a>
-                            <a href="{% url 'eliminar_modelo' m.pk %}" class="btn btn-sm btn-outline-danger border-0" style="background: rgba(239, 68, 68, 0.15);" title="Eliminar">
-                                <i class="bi bi-trash-fill text-danger"></i>
-                            </a>
-                        </div>
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'editar_modelo' m.pk %}" class="btn btn-sm btn-outline-warning" title="Editar Modelo">
+                            <i class="bi bi-pencil-fill"></i>
+                        </a>
+                        <a href="{% url 'eliminar_modelo' m.pk %}" class="btn btn-sm btn-outline-danger" title="Eliminar Modelo">
+                            <i class="bi bi-trash-fill"></i>
+                        </a>
                     </div>
                 </div>
-
             </div>
+
         </div>
     </div>
     {% empty %}
     <div class="col-12 text-center py-5">
-        <i class="bi bi-inbox fs-2 d-block mb-2 text-secondary"></i>
-        <p class="text-light opacity-75 fs-6">No se encontraron modelos de impresoras registrados.</p>
+        <p class="text-muted fs-5">No hay modelos de impresoras registrados en el catálogo.</p>
     </div>
     {% endfor %}
 </div>

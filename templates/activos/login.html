@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Iniciar Sesión - TechAssets La Serena{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center my-5">
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-lg p-3" style="background: rgba(15, 23, 42, 0.85) !important; backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08) !important; border-top: 3px solid #f59e0b !important; border-radius: 16px;">
+            <div class="card-body text-center p-4">
+                
+                <!-- Encabezado del Formulario -->
+                <div class="mb-4">
+                    <i class="bi bi-shield-lock-fill text-warning display-4"></i>
+                    <h4 class="fw-bold text-white mt-2 mb-1">Acceso al Sistema</h4>
+                    <small class="text-light opacity-75">Soporte Técnico — Sede La Serena</small>
+                </div>
+
+                <!-- Formulario de Acceso -->
+                <form method="POST" action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
+                    {% csrf_token %}
+
+                    <div class="mb-3 text-start">
+                        <label for="id_username" class="form-label text-warning fw-semibold fs-6">
+                            <i class="bi bi-person-fill me-1"></i>Usuario
+                        </label>
+                        <input type="text" name="username" id="id_username" class="form-control bg-dark text-white border-secondary px-3 py-2" placeholder="Ej: admin" required autofocus style="background: rgba(30, 41, 59, 0.8) !important;">
+                    </div>
+
+                    <div class="mb-4 text-start">
+                        <label for="id_password" class="form-label text-warning fw-semibold fs-6">
+                            <i class="bi bi-key-fill me-1"></i>Contraseña
+                        </label>
+                        <input type="password" name="password" id="id_password" class="form-control bg-dark text-white border-secondary px-3 py-2" placeholder="••••••••" required style="background: rgba(30, 41, 59, 0.8) !important;">
+                    </div>
+
+                    <button type="submit" class="btn btn-warning fw-bold text-dark w-100 py-2 shadow-sm" style="background-color: #f59e0b; border: none; font-size: 0.95rem;">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Ingresar
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

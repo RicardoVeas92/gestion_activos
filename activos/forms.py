@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.models import User
 
 from activos.models import (
     ImpresoraInstalada,
@@ -109,3 +110,59 @@ class RegistroUsoActivoForm(forms.ModelForm):
         self.fields['item_utilizado'].queryset = ItemInventario.objects.filter(
             estado='DISPONIBLE'
         )
+
+# ==========================================
+# NUEVO: FORMULARIO PARA CREAR USUARIOS
+# ==========================================
+class CrearUsuarioForm(forms.ModelForm):
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
+        label='Contraseña'
+    )
+    es_admin = forms.BooleanField(
+        required=False,
+        label='¿Es Administrador?',
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email', 'password']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
+        }
+        labels = {
+            'username': 'Nombre de Usuario',
+            'first_name': 'Nombre',
+            'last_name': 'Apellido',
+            'email': 'Correo Electrónico',
+        }
+
+# ==========================================
+# FORMULARIO PARA EDITAR USUARIOS
+# ==========================================
+class EditarUsuarioForm(forms.ModelForm):
+    es_admin = forms.BooleanField(
+        required=False,
+        label='¿Es Administrador?',
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
+        }
+        labels = {
+            'username': 'Nombre de Usuario',
+            'first_name': 'Nombre',
+            'last_name': 'Apellido',
+            'email': 'Correo Electrónico',
+        }

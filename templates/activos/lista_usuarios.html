@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestión de Usuarios - TechAssets{% endblock %}
+
+{% block content %}
+<style>
+    .table-dark-glass {
+        --bs-table-bg: transparent !important;
+        --bs-table-accent-bg: transparent !important;
+        color: #f1f5f9 !important;
+    }
+    .table-dark-glass td, .table-dark-glass th {
+        background-color: transparent !important;
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom" style="border-color: rgba(255,255,255,0.1) !important;">
+    <div>
+        <h3 class="fw-bold text-white mb-1 d-flex align-items-center">
+            <i class="bi bi-people-fill text-warning me-2 fs-4"></i>Usuarios y Técnicos Registrados
+        </h3>
+        <span class="text-light opacity-75" style="font-size: 0.88rem;">Gestión de acceso al sistema Sede La Serena</span>
+    </div>
+    <a href="{% url 'crear_usuario' %}" class="btn btn-warning fw-bold text-dark px-3 py-2 shadow-sm" style="background-color: #f59e0b; border: none; font-size: 0.9rem;">
+        <i class="bi bi-person-plus-fill me-1"></i>Crear Nuevo Usuario
+    </a>
+</div>
+
+<div class="card card-tech shadow-lg p-0">
+    <div class="table-responsive">
+        <table class="table table-dark-glass align-middle mb-0">
+            <thead>
+                <tr style="background: rgba(15, 23, 42, 0.95) !important; border-bottom: 2px solid #f59e0b;">
+                    <th class="text-warning fw-bold" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem;">Usuario</th>
+                    <th class="text-warning fw-bold" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem;">Nombre Completo</th>
+                    <th class="text-warning fw-bold" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem;">Correo Electrónico</th>
+                    <th class="text-warning fw-bold" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem;">Rol / Permiso</th>
+                    <th class="text-warning fw-bold text-end" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.2rem;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in usuarios %}
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+                    <td style="padding: 0.9rem 1.2rem;">
+                        <span class="fw-bold text-white d-flex align-items-center">
+                            <i class="bi bi-person-circle text-warning fs-5 me-2"></i>{{ u.username }}
+                        </span>
+                    </td>
+                    <td style="padding: 0.9rem 1.2rem;" class="text-light">
+                        {{ u.first_name }} {{ u.last_name|default:'' }}
+                    </td>
+                    <td style="padding: 0.9rem 1.2rem;">
+                        <span class="text-light opacity-75">{{ u.email|default:'Sin correo' }}</span>
+                    </td>
+                    <td style="padding: 0.9rem 1.2rem;">
+                        {% if u.is_staff %}
+                            <span class="badge bg-dark text-warning border border-warning px-2 py-1 shadow-sm">
+                                <i class="bi bi-shield-lock-fill me-1"></i>Administrador
+                            </span>
+                        {% else %}
+                            <span class="badge bg-dark text-info border border-info px-2 py-1 shadow-sm">
+                                <i class="bi bi-tools me-1"></i>Técnico
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.9rem 1.2rem;" class="text-end">
+                        <div class="btn-group" role="group">
+                            <a href="{% url 'editar_usuario' u.pk %}" class="btn btn-sm btn-outline-warning" title="Editar Usuario">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                            {% if u != request.user %}
+                            <a href="{% url 'eliminar_usuario' u.pk %}" class="btn btn-sm btn-outline-danger" title="Eliminar Usuario">
+                                <i class="bi bi-trash-fill"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
