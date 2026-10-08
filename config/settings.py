@@ -11,7 +11,7 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 # Leer configuraciones desde variables de entorno
 SECRET_KEY = os.getenv('SECRET_KEY', 'clave-por-defecto-seguridad')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost,52.91.84.220,*').split(',')
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
