@@ -112,17 +112,23 @@ class RegistroUsoActivoForm(forms.ModelForm):
         )
 
 # ==========================================
-# NUEVO: FORMULARIO PARA CREAR USUARIOS
+# FORMULARIO PARA CREAR USUARIOS (3 ROLES)
 # ==========================================
 class CrearUsuarioForm(forms.ModelForm):
+    OPCIONES_ROL = [
+        ('ADMIN', 'Administrador (Acceso Total + Usuarios)'),
+        ('OPERADOR', 'Operador / Técnico (Crear y Editar)'),
+        ('CONSULTA', 'Consulta (Solo Lectura)'),
+    ]
+
+    rol = forms.ChoiceField(
+        choices=OPCIONES_ROL,
+        widget=forms.Select(attrs={'class': 'form-select bg-dark text-white border-secondary'}),
+        label='Perfil de Usuario'
+    )
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
         label='Contraseña'
-    )
-    es_admin = forms.BooleanField(
-        required=False,
-        label='¿Es Administrador?',
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
     )
 
     class Meta:
@@ -134,21 +140,19 @@ class CrearUsuarioForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
             'email': forms.EmailInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
         }
-        labels = {
-            'username': 'Nombre de Usuario',
-            'first_name': 'Nombre',
-            'last_name': 'Apellido',
-            'email': 'Correo Electrónico',
-        }
 
-# ==========================================
-# FORMULARIO PARA EDITAR USUARIOS
-# ==========================================
+
 class EditarUsuarioForm(forms.ModelForm):
-    es_admin = forms.BooleanField(
-        required=False,
-        label='¿Es Administrador?',
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    OPCIONES_ROL = [
+        ('ADMIN', 'Administrador (Acceso Total + Usuarios)'),
+        ('OPERADOR', 'Operador / Técnico (Crear y Editar)'),
+        ('CONSULTA', 'Consulta (Solo Lectura)'),
+    ]
+
+    rol = forms.ChoiceField(
+        choices=OPCIONES_ROL,
+        widget=forms.Select(attrs={'class': 'form-select bg-dark text-white border-secondary'}),
+        label='Perfil de Usuario'
     )
 
     class Meta:
@@ -159,10 +163,4 @@ class EditarUsuarioForm(forms.ModelForm):
             'first_name': forms.TextInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
             'email': forms.EmailInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
-        }
-        labels = {
-            'username': 'Nombre de Usuario',
-            'first_name': 'Nombre',
-            'last_name': 'Apellido',
-            'email': 'Correo Electrónico',
         }

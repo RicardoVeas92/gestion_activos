@@ -100,6 +100,9 @@ def editar_modelo(request, pk):
 
 @login_required
 def eliminar_modelo(request, pk):
+    if not request.user.is_superuser:
+        messages.error(request, 'Permiso denegado. Solo Administradores pueden eliminar registros.')
+        return redirect('inicio')
     modelo = get_object_or_404(ModeloImpresora, pk=pk)
     if request.method == 'POST':
         modelo.delete()
@@ -154,6 +157,9 @@ def editar_impresora(request, pk):
 
 @login_required
 def eliminar_impresora(request, pk):
+    if not request.user.is_superuser:
+        messages.error(request, 'Permiso denegado. Solo Administradores pueden eliminar registros.')
+        return redirect('inicio')
     impresora = get_object_or_404(ImpresoraInstalada, pk=pk)
     if request.method == 'POST':
         impresora.delete()
@@ -208,6 +214,9 @@ def editar_item(request, pk):
 
 @login_required
 def eliminar_item(request, pk):
+    if not request.user.is_superuser:
+        messages.error(request, 'Permiso denegado. Solo Administradores pueden eliminar registros.')
+        return redirect('inicio')
     item = get_object_or_404(ItemInventario, pk=pk)
     if request.method == 'POST':
         item.delete()
@@ -270,41 +279,40 @@ def lista_usuarios(request):
 
 @login_required
 def crear_usuario(request):
-    # Restricción: Solo Administradores pueden crear usuarios
-    if not request.user.is_staff:
-        messages.error(request, 'Acceso denegado. Solo administradores pueden crear técnicos.')
+    if not request.user.is_superuser:
+        messages.error(request, 'Acceso restringido a Administradores.')
         return redirect('inicio')
 
     if request.method == 'POST':
         form = CrearUsuarioForm(request.POST)
         if form.is_valid():
-            nuevo_usuario = form.save(commit=False)
-            # Encriptamos la contraseña adecuadamente
-            nuevo_usuario.set_password(form.cleaned_data['password'])
+            usr = form.save(commit=False)
+            usr.set_password(form.cleaned_data['password'])
             
-            # Asignamos rango de Admin/Staff si el checkbox se marcó
-            if form.cleaned_data.get('es_admin'):
-                nuevo_usuario.is_staff = True
-                nuevo_usuario.is_superuser = True
-            
-            nuevo_usuario.save()
-            messages.success(request, f'Usuario "{nuevo_usuario.username}" creado exitosamente.')
+            rol = form.cleaned_data.get('rol')
+            if rol == 'ADMIN':
+                usr.is_staff = True
+                usr.is_superuser = True
+            elif rol == 'OPERADOR':
+                usr.is_staff = True
+                usr.is_superuser = False
+            else: # CONSULTA
+                usr.is_staff = False
+                usr.is_superuser = False
+                
+            usr.save()
+            messages.success(request, f'Usuario "{usr.username}" creado con perfil {rol}.')
             return redirect('lista_usuarios')
     else:
         form = CrearUsuarioForm()
 
-    return render(request, 'activos/form_usuario.html', {'form': form, 'titulo': 'Registrar Nuevo Técnico / Admin'})
+    return render(request, 'activos/form_usuario.html', {'form': form, 'titulo': 'Crear Nuevo Usuario'})
 
-# Asegúrate de incluir EditarUsuarioForm en las importaciones al inicio de views.py:
-# from .forms import ModeloImpresoraForm, ImpresoraInstaladaForm, ItemInventarioForm, CrearUsuarioForm, EditarUsuarioForm
 
-# ==========================================
-# EDITAR Y ELIMINAR USUARIOS (SOLO ADMIN)
-# ==========================================
 @login_required
 def editar_usuario(request, pk):
-    if not request.user.is_staff:
-        messages.error(request, 'Acceso denegado. Solo administradores pueden editar usuarios.')
+    if not request.user.is_superuser:
+        messages.error(request, 'Acceso restringido a Administradores.')
         return redirect('inicio')
 
     usuario_obj = get_object_or_404(User, pk=pk)
@@ -313,20 +321,33 @@ def editar_usuario(request, pk):
         form = EditarUsuarioForm(request.POST, instance=usuario_obj)
         if form.is_valid():
             usr = form.save(commit=False)
-            es_admin = form.cleaned_data.get('es_admin')
-            usr.is_staff = es_admin
-            usr.is_superuser = es_admin
+            rol = form.cleaned_data.get('rol')
+            
+            if rol == 'ADMIN':
+                usr.is_staff = True
+                usr.is_superuser = True
+            elif rol == 'OPERADOR':
+                usr.is_staff = True
+                usr.is_superuser = False
+            else: # CONSULTA
+                usr.is_staff = False
+                usr.is_superuser = False
+
             usr.save()
-            messages.success(request, f'Usuario "{usr.username}" actualizado correctamente.')
+            messages.success(request, f'Usuario "{usr.username}" actualizado.')
             return redirect('lista_usuarios')
     else:
-        initial_data = {'es_admin': usuario_obj.is_staff}
-        form = EditarUsuarioForm(instance=usuario_obj, initial=initial_data)
+        # Determinar el rol actual
+        if usuario_obj.is_superuser:
+            rol_actual = 'ADMIN'
+        elif usuario_obj.is_staff:
+            rol_actual = 'OPERADOR'
+        else:
+            rol_actual = 'CONSULTA'
+            
+        form = EditarUsuarioForm(instance=usuario_obj, initial={'rol': rol_actual})
 
-    return render(request, 'activos/form_usuario.html', {
-        'form': form, 
-        'titulo': f'Editar Usuario: {usuario_obj.username}'
-    })
+    return render(request, 'activos/form_usuario.html', {'form': form, 'titulo': f'Editar Usuario: {usuario_obj.username}'})
 
 
 @login_required

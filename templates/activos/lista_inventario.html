@@ -53,9 +53,11 @@
         </h3>
         <span class="text-light opacity-75 fs-6">Inventario disponible en bodega Sede La Serena</span>
     </div>
+    {% if user.is_staff %}
     <a href="{% url 'crear_item' %}" class="btn btn-warning fw-bold text-dark px-3 py-2 shadow-sm fs-6" style="background-color: #f59e0b; border: none;">
         <i class="bi bi-plus-circle-fill me-1"></i>Nuevo Ítem
     </a>
+    {% endif %}
 </div>
 
 <!-- TABLA DE INVENTARIO -->
@@ -79,11 +81,11 @@
                         {% if item.imagen %}
                             <!-- Solamente el disparador dentro de la celda -->
                             <img src="{{ item.imagen.url }}" 
-                                 alt="{{ item.nombre }}" 
-                                 class="img-stock-thumb" 
-                                 data-bs-toggle="modal" 
-                                 data-bs-target="#imageModal{{ item.pk }}"
-                                 title="Clic para ampliar">
+                                alt="{{ item.nombre }}" 
+                                class="img-stock-thumb" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#imageModal{{ item.pk }}"
+                                title="Clic para ampliar">
                         {% else %}
                             <div class="img-stock-thumb d-flex align-items-center justify-content-center bg-dark text-muted">
                                 <i class="bi bi-image fs-5"></i>
@@ -118,12 +120,17 @@
                     </td>
                     <td class="text-end">
                         <div class="btn-group" role="group">
+                            {% if user.is_staff %}
                             <a href="{% url 'editar_item' item.pk %}" class="btn btn-sm btn-outline-warning px-2.5" title="Editar Ítem">
                                 <i class="bi bi-pencil-fill"></i>
                             </a>
+                            {% endif %}
+
+                            {% if user.is_superuser %}
                             <a href="{% url 'eliminar_item' item.pk %}" class="btn btn-sm btn-outline-danger px-2.5" title="Eliminar Ítem">
                                 <i class="bi bi-trash-fill"></i>
                             </a>
+                            {% endif %}
                         </div>
                     </td>
                 </tr>

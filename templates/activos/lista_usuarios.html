@@ -53,16 +53,21 @@
                         <span class="text-light opacity-75">{{ u.email|default:'Sin correo' }}</span>
                     </td>
                     <td style="padding: 0.9rem 1.2rem;">
-                        {% if u.is_staff %}
-                            <span class="badge bg-dark text-warning border border-warning px-2 py-1 shadow-sm">
+                        {% if u.is_superuser %}
+                            <span class="badge bg-dark text-warning border border-warning px-3 py-1 fw-bold">
                                 <i class="bi bi-shield-lock-fill me-1"></i>Administrador
                             </span>
+                        {% elif u.is_staff %}
+                            <span class="badge bg-dark text-info border border-info px-3 py-1 fw-bold">
+                                <i class="bi bi-tools me-1"></i>Operador / Técnico
+                            </span>
                         {% else %}
-                            <span class="badge bg-dark text-info border border-info px-2 py-1 shadow-sm">
-                                <i class="bi bi-tools me-1"></i>Técnico
+                            <span class="badge bg-dark text-secondary border border-secondary px-3 py-1 fw-bold">
+                                <i class="bi bi-eye-fill me-1"></i>Consulta
                             </span>
                         {% endif %}
                     </td>
+                        
                     <td style="padding: 0.9rem 1.2rem;" class="text-end">
                         <div class="btn-group" role="group">
                             <a href="{% url 'editar_usuario' u.pk %}" class="btn btn-sm btn-outline-warning" title="Editar Usuario">

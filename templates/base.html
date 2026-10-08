@@ -123,7 +123,7 @@
                     <li class="nav-item">
                         <a class="nav-link nav-link-tech text-warning" href="{% url 'lista_usos' %}"><i class="bi bi-journal-check me-1"></i> Salidas Ticket</a>
                     </li>
-                    {% if user.is_staff %}
+                    {% if user.is_superuser %}
                         <li class="nav-item">
                             <a class="nav-link nav-link-tech text-warning fw-bold" href="{% url 'lista_usuarios' %}">
                                 <i class="bi bi-people-fill me-1"></i> Usuarios

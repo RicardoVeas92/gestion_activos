@@ -1,30 +1,25 @@
 import os
-
 from pathlib import Path
-
 import os
+from dotenv import load_dotenv 
 
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Cargar el archivo .env
+load_dotenv(os.path.join(BASE_DIR, '.env'))
+
+# Leer configuraciones desde variables de entorno
+SECRET_KEY = os.getenv('SECRET_KEY', 'clave-por-defecto-seguridad')
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-y-l7kt6qn3g+&7i_&gyogbqh9%)y(r_a$(5b1f(oc+x19i^zs+'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
 
 
 # Application definition

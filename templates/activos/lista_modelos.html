@@ -44,9 +44,11 @@
         </h3>
         <span class="text-light opacity-75" style="font-size: 0.88rem;">Especificaciones técnicas y documentación de impresoras</span>
     </div>
+    {% if user.is_staff %}
     <a href="{% url 'crear_modelo' %}" class="btn btn-warning fw-bold text-dark px-3 py-2 shadow-sm" style="background-color: #f59e0b; border: none; font-size: 0.9rem;">
         <i class="bi bi-plus-circle-fill me-1"></i>Nuevo Modelo
     </a>
+    {% endif %}
 </div>
 
 <!-- Rejilla de Cards -->
@@ -88,12 +90,17 @@
                     {% endif %}
 
                     <div class="btn-group" role="group">
+                        {% if user.is_staff %}
                         <a href="{% url 'editar_modelo' m.pk %}" class="btn btn-sm btn-outline-warning" title="Editar Modelo">
                             <i class="bi bi-pencil-fill"></i>
                         </a>
+                        {% endif %}
+
+                        {% if user.is_superuser %}
                         <a href="{% url 'eliminar_modelo' m.pk %}" class="btn btn-sm btn-outline-danger" title="Eliminar Modelo">
                             <i class="bi bi-trash-fill"></i>
                         </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
