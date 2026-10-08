@@ -1,9 +1,6 @@
 import os
 from pathlib import Path
-import os
 from dotenv import load_dotenv 
-
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -14,16 +11,9 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 # Leer configuraciones desde variables de entorno
 SECRET_KEY = os.getenv('SECRET_KEY', 'clave-por-defecto-seguridad')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
-
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
-
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost,52.91.84.220,*').split(',')
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -31,9 +21,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # API REST & Documentación
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_spectacular',
+    
+    # App Principal
     'activos',
 ]
 
@@ -52,7 +46,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ os.path.join (BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -66,10 +60,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
 # Database
-# https://docs.djangoproject.com/en/6.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -77,10 +68,7 @@ DATABASES = {
     }
 }
 
-
 # Password validation
-# https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -96,50 +84,35 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/6.1/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+LANGUAGE_CODE = 'es-cl'
+TIME_ZONE = 'America/Santiago'
 USE_I18N = True
-
 USE_TZ = True
 
+# Archivos estáticos (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.1/howto/static-files/
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
-STATIC_URL = 'static/'
+# Carpeta independiente para producción (evita el error E002)
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Email
-# https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
-
 MAILERS = {
     'default': {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# ==========================================
 # CONFIGURACIÓN DE SEGURIDAD Y SESIONES
-# ==========================================
-
-# 1. Cierra la sesión automáticamente cuando el usuario cierra el navegador o se detiene/reinicia el servidor
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-
-# 2. Duración máxima de la sesión en segundos (ejemplo: 1800 segundos = 30 minutos)
-# Transcurrido este tiempo de inactividad, la sesión expirará automáticamente.
-SESSION_COOKIE_AGE = 1800  
-
-# 3. Renueva la galleta (cookie) en cada petición del usuario para que el tiempo límite
-# se reinicie mientras el usuario siga interactuando activamente con el sistema.
+SESSION_COOKIE_AGE = 1800  # 30 minutos
 SESSION_SAVE_EVERY_REQUEST = True
 
 # Redirecciones de Autenticación
@@ -158,7 +131,7 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
-# Configuración de Swagger / OpenAPI con personalización de interfaz
+# Configuración de Swagger / OpenAPI
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Gestión de Activos Synergy - Sede La Serena',
     'DESCRIPTION': 'API RESTful para el control de inventario, modelos de impresoras y salidas por ticket',
@@ -180,11 +153,3 @@ SPECTACULAR_SETTINGS = {
         'displayOperationId': False,
     },
 }
-
-
-
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
