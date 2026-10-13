@@ -86,7 +86,9 @@
                             <i class="bi bi-file-earmark-pdf-fill me-1"></i>Manual
                         </a>
                     {% else %}
-                        <span class="text-muted small">Sin PDF</span>
+                        <button type="button" class="btn btn-sm btn-outline-secondary btn-manual-vacio">
+                            <i class="bi bi-file-earmark-pdf me-1"></i>Manual
+                        </button>
                     {% endif %}
 
                     <div class="btn-group" role="group">
@@ -113,4 +115,29 @@
     </div>
     {% endfor %}
 </div>
+
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+    <div id="toastManual" class="toast align-items-center text-white bg-warning border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                ⚠️ <strong>Aviso:</strong> Este modelo no tiene un manual PDF cargado.
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<!-- Script de activación -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var botones = document.querySelectorAll(".btn-manual-vacio");
+    botones.forEach(function(btn) {
+        btn.addEventListener("click", function () {
+            var toastEl = document.getElementById('toastManual');
+            var toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        });
+    });
+});
+</script>
 {% endblock %}
